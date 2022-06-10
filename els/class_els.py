@@ -3,7 +3,7 @@ import pandas as pd
 from els.gen_schedule import make_joint_calendar, schedule_generator
 from datetime import date
 from typing import List, Dict
-from idxdata.historical_data import get_hist_data
+from idxdata.historical_data import get_price_from_sql
 import QuantLib as ql
 
 

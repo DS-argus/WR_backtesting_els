@@ -1,5 +1,5 @@
 import els.class_els
-from idxdata.historical_data import get_hist_data
+from idxdata.historical_data import get_price_from_sql
 from els.class_els import SimpleELS, KIELS, LizardELS, LizardKIELS, Erase3To1ELS, MPELS
 
 import time
@@ -36,8 +36,8 @@ def period_divisor(num: int, date_from: date, date_to: date) -> list[list]:
 
 
 def run_backtesting_els_excel(els: els.class_els,
-                        start_date: date,
-                        end_date: date = date.today()) -> pd.DataFrame:
+                              start_date: date,
+                              end_date: date = date.today()) -> pd.DataFrame:
 
     """
     start_date부터 end_date까지 매일 투자했을 때 결과를 return
@@ -102,10 +102,7 @@ def create_excel():
     mp_barrier = float(wb1.range("I8").value)/100
     # MP_barrier = 0.6
 
-    df = get_hist_data()
-
-    if df.index[-1] != end_date:
-        raise Exception("rawdata 업데이트가 필요합니다")
+    df = get_price_from_sql(start_date, end_date, underlying, type='w')
 
     # 타입 종류에 따른 ELS 생성
     if wb1.range("I4").value == "월지급식 ELS":

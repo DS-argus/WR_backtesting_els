@@ -1,6 +1,6 @@
 import els.class_els
 from els.class_els import SimpleELS, KIELS, LizardELS, LizardKIELS, Erase3To1ELS, MPELS
-from idxdata.historical_data import get_hist_data
+from idxdata.historical_data import get_price_from_sql
 
 import time
 import xlwings as xw
@@ -90,14 +90,15 @@ def main():
     Lizard = {1: 0.9, 2: 0.85}
     Lizard_coupon = 1
     MP_barrier = 0.6
-    df = get_hist_data()
 
     start_date = date(2001, 1, 1)
     end_date = date(2022, 12, 31)
 
+    df = get_price_from_sql(start_date, end_date, underlying, type='w')
+
     # Set types of result format
     excel = True
-    chart = False
+    chart = True
 
     # Create ELS
     els = SimpleELS(underlying, start_date, maturity, periods, coupon, barrier, df, holiday=False)
