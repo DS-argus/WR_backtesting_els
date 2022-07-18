@@ -84,26 +84,27 @@ def main():
     underlying = ["KOSPI200", "EUROSTOXX50", "S&P500"]  # 기초자산
     maturity = 3  # 만기(단위:연)
     periods = 6   # 평가(단위:월)
-    coupon = 0.0822
-    barrier = [0.90, 0.90, 0.85, 0.80, 0.75, 0.6]
+    coupon = 0.08
+    barrier = [0.75, 0.75, 0.75, 0.75, 0.75, 0.70]
     KI_barrier = 0.5
     Lizard = {1: 0.9, 2: 0.85}
     Lizard_coupon = 1
     MP_barrier = 0.6
 
-    start_date = date(2001, 1, 1)
-    end_date = date(2022, 12, 31)
+    start_date = date(2005, 1, 1)
+    end_date = date(2022, 7, 13)
 
     df = get_price_from_sql(start_date, end_date, underlying, type='w')
 
     # Set types of result format
     excel = True
-    chart = True
+    chart = False
 
     # Create ELS
-    els = SimpleELS(underlying, start_date, maturity, periods, coupon, barrier, df, holiday=False)
+    #els = SimpleELS(underlying, start_date, maturity, periods, coupon, barrier, df, holiday=False)
     # els = LizardELS(underlying, start_date, maturity, periods, coupon, barrier, Lizard, Lizard_coupon, df)
     # els = MPELS(underlying, start_date, maturity, periods, coupon, barrier, MP_barrier, df)
+    els = KIELS(underlying, start_date, maturity, periods, coupon, barrier, KI_barrier, df, holiday=False)
 
     # Set number of processes and Create corresponding date interval for multiprocessing
     # With few experiments, 6 processes and interval showed the most fast results. Need to be adjusted.

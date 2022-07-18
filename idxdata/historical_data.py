@@ -94,10 +94,10 @@ def get_price_from_sql(from_:date,
 
 
 if __name__ =="__main__":
-    start = date(2020, 1, 1)
+    start = date(2012, 7, 14)
     end = date.today()
-    underlying = ['KOSPI200', "EUROSTOXX50", "CSI300"]
+    underlying = ['KOSPI200', "EUROSTOXX50", "S&P500"]
     df = get_price_from_sql(start, end, underlying, type="w")
 
-    print(df)
+    xw.view(df)
 
