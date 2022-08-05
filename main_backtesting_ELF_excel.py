@@ -50,6 +50,7 @@ def run_backtesting_els_excel(els: els.class_els,
     # backtesting 결과를 시작일, 상환개월, 수익률 df로 정리하기 위해 빈 Dataframe 형성
     df_result = pd.DataFrame(columns=['투자기간(월)', '수익률', '결과'], dtype='object')
     df_result.index.name = "투자 시작일"
+    worst = []
 
     if els.holiday is True:
 
@@ -62,6 +63,10 @@ def run_backtesting_els_excel(els: els.class_els,
             if els.get_schedule()[-1] <= els.df.index[-1]:
                 df_result.loc[day] = els.get_result()
 
+                row = int(els.get_result()[0] / els.periods)
+                worst_index = els.get_ratio_price().iloc[row - 1, :].idxmin(axis=0)
+                worst.append(worst_index)
+
     else:
 
         day_list = pd.date_range(start_date, end_date).date
@@ -72,6 +77,12 @@ def run_backtesting_els_excel(els: els.class_els,
             if els.get_schedule()[-1] <= els.df.index[-1]:
                 df_result.loc[day] = els.get_result()
 
+                row = int(els.get_result()[0] / els.periods)
+                worst_index = els.get_ratio_price().iloc[row - 1, :].idxmin(axis=0)
+                worst.append(worst_index)
+
+    df_result['Worst'] = worst
+
     return df_result
 
 
@@ -81,7 +92,7 @@ def print_to_excel():
     wb1 = wb.sheets['result']
 
     # 기존 데이터 삭제
-    wb1.range("A2:D1000").clear()
+    wb1.range("A2:E1000").clear()
 
     # 변수 지정
     start_date = wb1.range("I2").value
@@ -193,6 +204,6 @@ def print_to_excel():
 
 if __name__ == "__main__":
     start_time = time.time()
-    xw.Book(r"\\172.31.1.222\Deriva\우리자산운용_공모ELF\공모 백테스팅\공모 백테스팅.xlsm").set_mock_caller()
+    xw.Book(r"\\172.31.1.222\Deriva\우리자산운용_공모ELF\제안서 작성용\공모 백테스팅.xlsm").set_mock_caller()
     print_to_excel()
     print(time.time() - start_time)

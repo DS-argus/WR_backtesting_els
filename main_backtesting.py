@@ -47,13 +47,10 @@ def run_backtesting_els(els: els.class_els,
     :param end_date: 투자 종료일(마지막 평가일이 df에 있는 날까지)
     :return: dataframe
     """
-    #
-    # if els.df.index[-1] < end_date:
-    #     raise Exception("end_date가 df에 없습니다. df 업데이트 혹은 end_date를 변경해주세요.")
 
     # backtesting 결과를 시작일, 상환개월, 수익률 df로 정리하기 위해 빈 Dataframe 형성
     df_result = pd.DataFrame(columns=['month', 'return', 'result'], dtype='object')
-
+    worst = []
     if els.holiday:
 
         business_day_list = els.get_calendar().businessDayList(ql.Date.from_date(start_date),
@@ -65,6 +62,9 @@ def run_backtesting_els(els: els.class_els,
             if els.get_schedule()[-1] <= els.df.index[-1]:
                 df_result.loc[day] = els.get_result()
 
+                row = int(els.get_result()[0] / els.periods)
+                worst_index = els.get_ratio_price().iloc[row - 1, :].idxmin(axis=0)
+                worst.append(worst_index)
     else:
 
         day_list = pd.date_range(start_date, end_date).date
@@ -74,6 +74,12 @@ def run_backtesting_els(els: els.class_els,
 
             if els.get_schedule()[-1] <= els.df.index[-1]:
                 df_result.loc[day] = els.get_result()
+
+                row = int(els.get_result()[0] / els.periods)
+                worst_index = els.get_ratio_price().iloc[row - 1, :].idxmin(axis=0)
+                worst.append(worst_index)
+
+    df_result['worst'] = worst
 
     return df_result
 
@@ -85,14 +91,14 @@ def main():
     maturity = 3  # 만기(단위:연)
     periods = 6   # 평가(단위:월)
     coupon = 0.08
-    barrier = [0.75, 0.75, 0.75, 0.75, 0.75, 0.70]
+    barrier = [0.80, 0.80, 0.80, 0.80, 0.75, 0.70]
     KI_barrier = 0.5
     Lizard = {1: 0.9, 2: 0.85}
     Lizard_coupon = 1
     MP_barrier = 0.6
 
     start_date = date(2005, 1, 1)
-    end_date = date(2022, 7, 13)
+    end_date = date(2022, 8, 2)
 
     df = get_price_from_sql(start_date, end_date, underlying, type='w')
 
@@ -166,3 +172,4 @@ if __name__ == "__main__":
     start_time = time.time()
     main()
     print(time.time() - start_time)
+

@@ -461,7 +461,7 @@ if __name__ == "__main__":
 
     # ELS 정보(엑셀 시트 내에서 받아오는 걸로 수정해야함)
     underlying = ["HSCEI", 'EUROSTOXX50', 'KOSPI200']  # 기초자산
-    start_date = "2000-01-01"  # 시작일 문자열로 받기
+    start_date = "2010-01-01"  # 시작일 문자열로 받기
     start_date = date.fromisoformat(start_date)  # start_date datetime으로 변환
     maturity = 3  # 만기(단위:연)
     periods = 6  # 평가(단위:월)
@@ -470,21 +470,21 @@ if __name__ == "__main__":
     KI_barrier = 0.5
     Lizard = {1: 0.90, 2: 0.85}
     MP_barrier = 0.6
-    df = get_hist_data()
+    df = get_price_from_sql(date(2009, 1, 1), date.today(), underlying, type='w')
 
     #ELS 생성
     els1 = SimpleELS(underlying, start_date, maturity, periods, coupon, barrier, df)
-    els2 = Erase3To1ELS(underlying, start_date, maturity, periods, coupon, barrier, 2, df)
-    els3 = KIELS(underlying, start_date, maturity, periods, coupon, barrier, KI_barrier, df)
-    els4 = LizardELS(underlying, start_date, maturity, periods, coupon, barrier, Lizard, 1, df)
-    els5 = LizardKIELS(underlying, start_date, maturity, periods, coupon, barrier, KI_barrier, Lizard, 1, df)
-    els6 = MPELS(underlying, start_date, maturity, periods, coupon, barrier, MP_barrier, df, holiday=True)
-    els7 = MPELS(underlying, start_date, maturity, periods, coupon, barrier, MP_barrier, df, holiday=False)
+    # els2 = Erase3To1ELS(underlying, start_date, maturity, periods, coupon, barrier, 2, df)
+    # els3 = KIELS(underlying, start_date, maturity, periods, coupon, barrier, KI_barrier, df)
+    # els4 = LizardELS(underlying, start_date, maturity, periods, coupon, barrier, Lizard, 1, df)
+    # els5 = LizardKIELS(underlying, start_date, maturity, periods, coupon, barrier, KI_barrier, Lizard, 1, df)
+    # els6 = MPELS(underlying, start_date, maturity, periods, coupon, barrier, MP_barrier, df, holiday=True)
+    # els7 = MPELS(underlying, start_date, maturity, periods, coupon, barrier, MP_barrier, df, holiday=False)
 
     print(els1.get_result())
-    print(els2.get_result())
-    print(els3.get_result())
-    print(els4.get_result())
-    print(els5.get_result())
-    print(els6.get_result())
-    print(els7.get_result())
+    # print(els2.get_result())
+    # print(els3.get_result())
+    # print(els4.get_result())
+    # print(els5.get_result())
+    # print(els6.get_result())
+    # print(els7.get_result())

@@ -9,11 +9,11 @@ from datetime import date, datetime, timedelta
 
 
 def get_price_from_sql(from_:date,
-                           to_:date,
-                           idxs: list,
-                           type:str = "o",
-                           flds: str = 'PX_Last',
-                           ffill:bool = True) -> pd.DataFrame:
+                       to_:date,
+                       idxs: list,
+                       type:str = "o",
+                       flds: str = 'PX_Last',
+                       ffill:bool = True) -> pd.DataFrame:
 
     server = MSSQL.instance()
     server.login(
