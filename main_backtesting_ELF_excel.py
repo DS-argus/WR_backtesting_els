@@ -92,7 +92,7 @@ def print_to_excel():
     wb1 = wb.sheets['result']
 
     # 기존 데이터 삭제
-    wb1.range("A2:E1000").clear_contents()
+    wb1.range("A2:E10000").clear_contents()
 
     # 변수 지정
     start_date = wb1.range("I2").value
