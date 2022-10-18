@@ -73,7 +73,7 @@ def run_backtesting_els_excel(els: els.class_els,
 
         for day in day_list:
             els.start_date = day
-
+            # print(els.get_schedule()[-1], els.df.index[-1])
             if els.get_schedule()[-1] <= els.df.index[-1]:
                 df_result.loc[day] = els.get_result()
 
@@ -92,7 +92,7 @@ def print_to_excel():
     wb1 = wb.sheets['result']
 
     # 기존 데이터 삭제
-    wb1.range("A2:E1000").clear()
+    wb1.range("A2:E1000").clear_contents()
 
     # 변수 지정
     start_date = wb1.range("I2").value

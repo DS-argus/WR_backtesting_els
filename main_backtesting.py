@@ -73,7 +73,7 @@ def run_backtesting_els(els: els.class_els,
             els.start_date = day
 
             if els.get_schedule()[-1] <= els.df.index[-1]:
-                df_result.loc[day] = els.get_result()
+                df_result.loc[day, ['month', 'return', 'result']] = els.get_result()
 
                 row = int(els.get_result()[0] / els.periods)
                 worst_index = els.get_ratio_price().iloc[row - 1, :].idxmin(axis=0)
@@ -87,18 +87,18 @@ def run_backtesting_els(els: els.class_els,
 def main():
 
     # Set ELS & Backtesting Variables
-    underlying = ["KOSPI200", "EUROSTOXX50", "S&P500"]  # 기초자산
+    underlying = ["EUROSTOXX50", "S&P500"]  # 기초자산
     maturity = 3  # 만기(단위:연)
     periods = 6   # 평가(단위:월)
-    coupon = 0.08
-    barrier = [0.80, 0.80, 0.80, 0.80, 0.75, 0.70]
+    coupon = 0.02
+    barrier = [0.95, 0.85, 0.80, 0.80, 0.75, 0.70]
     KI_barrier = 0.5
     Lizard = {1: 0.9, 2: 0.85}
     Lizard_coupon = 1
     MP_barrier = 0.6
 
     start_date = date(2005, 1, 1)
-    end_date = date(2022, 8, 2)
+    end_date = date(2022, 8, 31)
 
     df = get_price_from_sql(start_date, end_date, underlying, type='w')
 
@@ -117,7 +117,7 @@ def main():
     num_processes = 6
 
     interval_date_list = period_divisor(num_processes, start_date, end_date)
-
+    print(interval_date_list)
     multi_list = []
     for sub_list in interval_date_list:
         sub_list.insert(0, els)

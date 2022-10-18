@@ -8,12 +8,12 @@ import numpy as np
 from datetime import date, datetime, timedelta
 
 
-def get_price_from_sql(from_:date,
-                       to_:date,
+def get_price_from_sql(from_: date,
+                       to_: date,
                        idxs: list,
-                       type:str = "o",
                        flds: str = 'PX_Last',
-                       ffill:bool = True) -> pd.DataFrame:
+                       type: str = "o",
+                       ffill: bool = True) -> pd.DataFrame:
 
     server = MSSQL.instance()
     server.login(
@@ -22,18 +22,14 @@ def get_price_from_sql(from_:date,
     )
 
     # 시작일이 공휴일이면 ffill 할 수가 없어 넉넉하게 과거 10일 데이터 불러와서 출력은 시작일부터
-    # DB에 2000/01/04 부터 들어가 있어 CSI300은 처음엔 NaN으로 나옴
-    if from_ < date(2000, 1, 4):
-        from_ = date(2000, 1, 4)
-
-    from_ = from_ - timedelta(10)
+    from_1 = from_ - timedelta(days=10)
 
     # query 조건
     cond_name = [f"NAME = '{idx}'" for idx in idxs]
     cond_name = " or ".join(cond_name)
 
     cond = [
-        f"DATE >= '{from_.strftime('%Y%m%d')}'",
+        f"DATE >= '{from_1.strftime('%Y%m%d')}'",
         f"DATE <= '{to_.strftime('%Y%m%d')}'",
         f"({cond_name})",
         f"TYPE = '{flds}'"
@@ -68,13 +64,13 @@ def get_price_from_sql(from_:date,
     if type == "o":
         if ffill is True:
             d.fillna(method='ffill', inplace=True)
-            return d.iloc[10:, :]
+            return d.loc[from_:, :]
         else:
-            return d.iloc[10:, :]
+            return d.loc[from_:, :]
 
     # 모든 날 추가한 version
     elif type == "w":
-        dt_rng = pd.date_range(from_, to_).date
+        dt_rng = pd.date_range(from_1, to_).date
         d_weekend = pd.DataFrame(index=dt_rng, columns=idxs)
         d_weekend.index.name = "Date"
 
@@ -88,16 +84,16 @@ def get_price_from_sql(from_:date,
         if ffill is True:
             d_weekend.fillna(method='ffill', inplace=True)
 
-            return d_weekend.iloc[10:, :]
+            return d_weekend.loc[from_:, :]
         else:
-            return d_weekend.iloc[10:, :]
+            return d_weekend.loc[from_:, :]
 
 
-if __name__ =="__main__":
-    start = date(2012, 7, 14)
+if __name__ == "__main__":
+    start = date(2005, 1, 1)
     end = date.today()
     underlying = ['KOSPI200', "EUROSTOXX50", "S&P500"]
     df = get_price_from_sql(start, end, underlying, type="w")
 
-    xw.view(df)
+    print(df)
 

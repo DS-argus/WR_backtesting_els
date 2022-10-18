@@ -48,8 +48,34 @@ class SimpleELS:
         )
 
     def get_initial_price(self) -> pd.DataFrame:
-        df_initial_price = self.df.loc[self.start_date][self.underlying]
+        if self.holiday is True:
+            start_date = ql.Date.from_date(self.start_date)
+            schedule = ql.Schedule(start_date,
+                                   start_date + ql.Period(self.maturity, ql.Years),
+                                   ql.Period(self.periods, ql.Months),
+                                   self.get_calendar(),
+                                   ql.Following,
+                                   ql.Following,
+                                   ql.DateGeneration.Forward,
+                                   False)
+
+            # from ql.Date to datetime.date
+            schedule = [ql.Date.to_date(x) for x in list(schedule)]
+
+            idx = schedule[0]
+
+        else:
+            idx = self.start_date
+
+        df_initial_price = self.df.loc[idx][self.underlying]
         return np.array(df_initial_price).reshape(1, len(self.underlying))
+
+
+
+
+
+        # df_initial_price = self.df.loc[self.start_date][self.underlying]
+        # return np.array(df_initial_price).reshape(1, len(self.underlying))
 
     def get_schedule_price(self) -> pd.DataFrame:
         return self.df.loc[self.get_schedule()][self.underlying]
