@@ -73,7 +73,6 @@ def run_backtesting_els_excel(els: els.class_els,
 
         for day in day_list:
             els.start_date = day
-            # print(els.get_schedule()[-1], els.df.index[-1])
             if els.get_schedule()[-1] <= els.df.index[-1]:
                 df_result.loc[day] = els.get_result()
 
@@ -90,9 +89,6 @@ def print_to_excel():
 
     wb = xw.Book.caller()
     wb1 = wb.sheets['result']
-
-    # 기존 데이터 삭제
-    wb1.range("A2:E10000").clear_contents()
 
     # 변수 지정
     start_date = wb1.range("I2").value
@@ -143,15 +139,16 @@ def print_to_excel():
 
     elif els_type == "리자드 ELS":
         els = LizardELS(underlying, start_date, maturity, periods,
-                        coupon, barrier, lizard_barrier, df, holiday=False)
+                        coupon, barrier, lizard_barrier, Lizard_coupon=1, df=df, holiday=False)
 
     elif els_type == "리자드 낙인 ELS":
         els = LizardKIELS(underlying, start_date, maturity, periods,
-                          coupon, barrier, KI_barrier, lizard_barrier, df, holiday=False)
+                          coupon, barrier, KI_barrier, lizard_barrier,
+                          Lizard_coupon=1, df=df, holiday=False)
 
     elif els_type == "월지급 ELS":
         els = MPELS(underlying, start_date, maturity, periods,
-                    coupon, barrier, mp_barrier, df, holiday=False)
+                    coupon, barrier, mp_barrier, df=df, holiday=False)
 
     else:
 
@@ -199,11 +196,16 @@ def print_to_excel():
     wb1.range("U2").value = first_loss
     wb1.range("U3").value = last_loss
 
+    # 기존 데이터 남아있을 경우 삭제
+    length = len(df_result.index)
+    range_delete = f"A{length + 2}:E10000"
+    wb1.range(range_delete).clear_contents()
+
     return
 
 
 if __name__ == "__main__":
     start_time = time.time()
-    xw.Book(r"\\172.31.1.222\Deriva\우리자산운용_공모ELF\제안서 작성용\공모 백테스팅.xlsm").set_mock_caller()
+    xw.Book(r"\\172.31.1.222\elf\퀀트파생실\제안서 작성용\공모 백테스팅 - 박성민.xlsm").set_mock_caller()
     print_to_excel()
     print(time.time() - start_time)

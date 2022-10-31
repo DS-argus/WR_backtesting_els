@@ -87,13 +87,13 @@ def run_backtesting_els(els: els.class_els,
 def main():
 
     # Set ELS & Backtesting Variables
-    underlying = ["EUROSTOXX50", "S&P500"]  # 기초자산
+    underlying = ["KOSPI200", "EUROSTOXX50", "S&P500"]  # 기초자산
     maturity = 3  # 만기(단위:연)
     periods = 6   # 평가(단위:월)
     coupon = 0.02
     barrier = [0.95, 0.85, 0.80, 0.80, 0.75, 0.70]
     KI_barrier = 0.5
-    Lizard = {1: 0.9, 2: 0.85}
+    Lizard = {1: 0.9, 2: 0.80}
     Lizard_coupon = 1
     MP_barrier = 0.6
 
@@ -108,9 +108,9 @@ def main():
 
     # Create ELS
     #els = SimpleELS(underlying, start_date, maturity, periods, coupon, barrier, df, holiday=False)
-    # els = LizardELS(underlying, start_date, maturity, periods, coupon, barrier, Lizard, Lizard_coupon, df)
+    els = LizardELS(underlying, start_date, maturity, periods, coupon, barrier, Lizard, Lizard_coupon, df, holiday=False)
     # els = MPELS(underlying, start_date, maturity, periods, coupon, barrier, MP_barrier, df)
-    els = KIELS(underlying, start_date, maturity, periods, coupon, barrier, KI_barrier, df, holiday=False)
+    # els = KIELS(underlying, start_date, maturity, periods, coupon, barrier, KI_barrier, df, holiday=False)
 
     # Set number of processes and Create corresponding date interval for multiprocessing
     # With few experiments, 6 processes and interval showed the most fast results. Need to be adjusted.
